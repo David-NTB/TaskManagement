@@ -1,0 +1,170 @@
+// User Request
+GET http://localhost:5000/users
+
+### 
+
+GET http://localhost:5000/users/3
+
+###
+
+POST http://localhost:5000/users
+Content-Type: application/json
+
+{    
+    "user_name": "Jane Doe",
+    "user_email": "janedoe@gmail.com"
+}
+
+###
+
+PATCH http://localhost:5000/users/1
+Content-Type: application/json
+
+{    
+    "user_name": "Luqman",
+    "user_email": "luqman@gmail.com"
+}    
+
+###
+
+DELETE  http://localhost:5000/users/1
+
+###
+
+// Label Request
+GET http://localhost:5000/labels
+
+### 
+
+GET http://localhost:5000/labels/1
+
+###
+
+POST http://localhost:5000/labels
+Content-Type: application/json
+
+{    
+    "label_name": "Done"
+}
+
+###
+
+PATCH http://localhost:5000/labels/1
+Content-Type: application/json
+
+{    
+    "label_name": "Sampun"
+}    
+
+###
+
+DELETE  http://localhost:5000/labels/1
+
+###
+
+// List Request
+GET http://localhost:5000/lists
+
+### 
+
+GET http://localhost:5000/lists/1
+
+###
+
+POST http://localhost:5000/lists
+Content-Type: application/json
+
+{    
+    "list_name": "Pramuka"
+}
+
+###
+
+PATCH http://localhost:5000/lists/1
+Content-Type: application/json
+
+{    
+    "list_name": "Mapala"
+}    
+
+###
+
+DELETE  http://localhost:5000/lists/1
+
+###
+
+// Card Request
+GET http://localhost:5000/cards
+
+### 
+
+GET http://localhost:5000/cards/1
+
+###
+
+POST http://localhost:5000/cards
+Content-Type: application/json
+
+{    
+    "card_name": "Pramuka",
+    "date_start": "2024-04-29 02:23:45",
+    "date_end": "2025-04-29 20:23:45",
+    "description": "Wezezeze",
+    "list_id": "1",
+    "label_id": "1",
+    "member_id": "1"
+}
+
+###
+
+PATCH http://localhost:5000/cards/2
+Content-Type: application/json
+
+{    
+    "card_name": "WPAsdk",
+    "date_start": "9990-04-29 02:23:45",
+    "date_end": "9999-04-29 20:23:45",
+    "description": "Hehehee",
+    "list_id": "1",
+    "label_id": "1",
+    "member_id": "1"
+}    
+
+###
+
+DELETE  http://localhost:5000/cards/1
+
+###
+
+// Member Request
+GET http://localhost:5000/members
+
+### 
+
+GET http://localhost:5000/members/1
+
+###
+
+POST http://localhost:5000/members
+Content-Type: application/json
+
+{    
+    "user_id": "1",
+    "card_id": "1"
+}
+
+###
+
+PATCH http://localhost:5000/members/2
+Content-Type: application/json
+
+{    
+    "user_id": "1",
+    "card_id": "1"
+}    
+
+###
+
+DELETE  http://localhost:5000/members/1
+
+###
