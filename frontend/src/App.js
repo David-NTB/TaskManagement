@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import UserList from "./components/User/UserList";
+import MainMenu from "./components/MainMenu";
 import AddUser from "./components/User/AddUser";
 import EditUser from "./components/User/EditUser";
 import LabelList from "./components/Label/LabelList";
@@ -11,6 +12,7 @@ function App() {
     <div>
       <BrowserRouter>
         <Routes>
+          <Route path="" element={<MainMenu />} />
           <Route path="users" element={<UserList />} />
           <Route path="users/add" element={<AddUser />} />
           <Route path="users/edit/:id" element={<EditUser />} />
