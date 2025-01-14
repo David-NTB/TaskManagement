@@ -1,16 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import "./Test.css";
 
-const Test = () => {
+const TaskManagement = () => {
   const [lists, setLists] = useState([]);
+  const loadedLists = useRef(new Set()); // Keep track of lists that have loaded their cards
 
-  // Fetch all lists on component mount
   useEffect(() => {
     getLists();
   }, []);
 
-  // Fetch lists from the server
   const getLists = async () => {
     try {
       const response = await axios.get("http://localhost:5000/lists");
@@ -25,7 +23,40 @@ const Test = () => {
     }
   };
 
-  // Add a new list
+  const getCardsForList = async (list_id) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/cardList?list_id=${list_id}`
+      );
+      return response.data.map((card) => ({
+        id: card.id,
+        card_name: card.card_name,
+      }));
+    } catch (error) {
+      console.error(`Error fetching cards for list ${list_id}:`, error);
+      return [];
+    }
+  };
+
+  const loadCards = async () => {
+    const updatedLists = await Promise.all(
+      lists.map(async (list) => {
+        if (!loadedLists.current.has(list.id)) {
+          // Only load cards if not already loaded
+          const cards = await getCardsForList(list.id);
+          loadedLists.current.add(list.id); // Mark this list as loaded
+          return { ...list, cards };
+        }
+        return list;
+      })
+    );
+    setLists(updatedLists);
+  };
+
+  useEffect(() => {
+    if (lists.length > 0) loadCards();
+  }, [lists]);
+
   const addList = async (list_name) => {
     try {
       const response = await axios.post("http://localhost:5000/lists", {
@@ -42,49 +73,16 @@ const Test = () => {
     }
   };
 
-  // Delete a list
   const deleteList = async (list_id) => {
     try {
       await axios.delete(`http://localhost:5000/lists/${list_id}`);
+      loadedLists.current.delete(list_id); // Remove from loaded lists
       setLists((prevLists) => prevLists.filter((list) => list.id !== list_id));
     } catch (error) {
       console.error("Error deleting list:", error);
     }
   };
 
-  // Fetch cards for a specific list
-  const getCardsForList = async (list_id) => {
-    try {
-      const response = await axios.get(
-        `http://localhost:5000/cardList?list_id=${list_id}`
-      );
-      return response.data.map((card) => ({
-        id: card.id,
-        card_name: card.card_name,
-      }));
-    } catch (error) {
-      console.error(`Error fetching cards for list ${list_id}:`, error);
-      return [];
-    }
-  };
-
-  // Load cards for all lists
-  const loadCards = async () => {
-    const updatedLists = await Promise.all(
-      lists.map(async (list) => {
-        const cards = await getCardsForList(list.id);
-        return { ...list, cards };
-      })
-    );
-    setLists(updatedLists);
-  };
-
-  // Load cards when lists are updated
-  useEffect(() => {
-    if (lists.length > 0) loadCards();
-  }, [lists]);
-
-  // Add a new card to a specific list
   const addCard = async (list_id, card_name) => {
     try {
       const response = await axios.post("http://localhost:5000/cards", {
@@ -107,15 +105,15 @@ const Test = () => {
     }
   };
 
-  // Delete a card
-  const deleteCard = async (card_id) => {
+  const deleteCard = async (card_id, list_id) => {
     try {
       await axios.delete(`http://localhost:5000/cards/${card_id}`);
       setLists((prevLists) =>
-        prevLists.map((list) => ({
-          ...list,
-          cards: list.cards.filter((card) => card.id !== card_id),
-        }))
+        prevLists.map((list) =>
+          list.id === list_id
+            ? { ...list, cards: list.cards.filter((card) => card.id !== card_id) }
+            : list
+        )
       );
     } catch (error) {
       console.error("Error deleting card:", error);
@@ -123,14 +121,14 @@ const Test = () => {
   };
 
   return (
-    <div className="App has-background-light">
+    <div className="App" style={{ overflowX: "auto", whiteSpace: "nowrap" }}>
       <section className="section">
         <div className="container">
           <h1 className="title">Task Management</h1>
-          <div className="columns lists-container">
+          <div className="columns is-multiline">
             {lists.map((list) => (
               <div key={list.id} className="column is-one-third">
-                <div className="box list-box" >
+                <div className="box">
                   <div className="level">
                     <div className="level-left">
                       <h2 className="title is-4">{list.list_name}</h2>
@@ -138,7 +136,8 @@ const Test = () => {
                     <div className="level-right">
                       <button
                         onClick={() => deleteList(list.id)}
-                        className="button is-dark">
+                        className="button is-danger"
+                      >
                         X
                       </button>
                     </div>
@@ -147,11 +146,12 @@ const Test = () => {
                     {list.cards.map((card) => (
                       <li key={card.id} className="notification is-light">
                         <div className="level">
-                          <div className="level-left has-text-black">{card.card_name}</div>
+                          <div className="level-left">{card.card_name}</div>
                           <div className="level-right">
                             <button
-                              onClick={() => deleteCard(card.id)}
-                              className="button is-light">
+                              onClick={() => deleteCard(card.id, list.id)}
+                              className="button is-danger"
+                            >
                               X
                             </button>
                           </div>
@@ -241,4 +241,4 @@ const AddListForm = ({ addList }) => {
   );
 };
 
-export default Test;
+export default TaskManagement;
