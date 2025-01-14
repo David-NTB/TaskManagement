@@ -1,6 +1,6 @@
 import Card from "../models/CardModel.js";
 
-export const getCards = async (req, res) => {
+export const getAllCards = async (req, res) => {
     try {
         const response = await Card.findAll();
         res.status(200).json(response);
@@ -11,15 +11,14 @@ export const getCards = async (req, res) => {
 
 export const getCardById = async (req, res) => {
     try {
-        const response = await Card.findOne( {
-            where: {
-                id: req.params.id
-            }
-        });
+        const { list_id } = req.query;
+        const whereClause = list_id ? { list_id } : {};
+    
+        const response = await Card.findAll({ where: whereClause });
         res.status(200).json(response);
-    } catch (error) {
+      } catch (error) {
         console.log(error.message);
-    }
+      }
 }
  
 export const createCard = async (req, res) => {

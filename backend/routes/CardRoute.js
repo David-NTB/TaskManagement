@@ -1,6 +1,6 @@
 import express, { Router } from "express";
 import {
-    getCards,
+    getAllCards,
     getCardById,
     createCard,
     updateCard,
@@ -9,8 +9,8 @@ import {
 
 const router = express.Router();
 
-router.get('/cards', getCards);
-router.get('/cards/:id', getCardById);
+router.get('/cards', getAllCards);
+router.get('/cardList', getCardById);
 router.post('/cards', createCard);
 router.patch('/cards/:id', updateCard);
 router.delete('/cards/:id', deleteCard);

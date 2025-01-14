@@ -1,5 +1,7 @@
 import { Sequelize } from "sequelize";
 import db from "../config/Database.js";
+import List from "../models/ListModel.js";
+import label from "../models/LabelModel.js";
 
 const {DataTypes} = Sequelize;
 
@@ -25,6 +27,12 @@ const Card = db.define('card', {
 }, {
     freezeTableName:true
 });
+
+List.hasMany(Card, { foreignKey: "list_id" });
+Card.belongsTo(List, { foreignKey: "list_id" });
+
+label.hasMany(Card, { foreignKey: "label_id" });
+Card.belongsTo(label, { foreignKey: "label_id" });
 
 export default Card;
 
